@@ -1,0 +1,33 @@
+{
+  "name": "elosaude-analyzer",
+  "version": "2.0.0",
+  "description": "EloSaúde - Analyzer inteligente de exames com suporte a IMC",
+  "main": "server.js",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "elosauде",
+    "lab-analyzer",
+    "healthcare",
+    "imc",
+    "functional-medicine"
+  ],
+  "author": "Eloise Mari Mendes (COREN/PR 740225)",
+  "license": "PROPRIETARY",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.31.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.19.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/esterevelise/elosaude-analyzer.git"
+  }
+}
