@@ -569,6 +569,15 @@ app.get('/api/test', (req, res) => {
   });
 });
 
+app.get('/api/test', (req, res) => {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  res.json({ 
+    status: 'OK - Servidor rodando', 
+    apiKeyExists: !!apiKey,
+    apiKeyPrefix: apiKey ? apiKey.substring(0, 10) + '...' : 'UNDEFINED'
+  });
+});
+
 app.post('/api/analyze', async (req, res) => {
   try {
     const { pdfBase64, patientName, peso, altura, genero } = req.body;
