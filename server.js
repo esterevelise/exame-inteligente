@@ -556,6 +556,19 @@ app.get('/', (req, res) => {
   `);
 });
 
+// ===== ENDPOINT DE TESTE =====
+app.get('/api/test', (req, res) => {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  res.json({
+    status: 'OK - Servidor rodando!',
+    timestamp: new Date().toISOString(),
+    apiKeyExists: !!apiKey,
+    apiKeyPrefix: apiKey ? apiKey.substring(0, 10) + '...' : 'UNDEFINED',
+    nodeEnv: process.env.NODE_ENV,
+    port: process.env.PORT || 3001
+  });
+});
+
 app.post('/api/analyze', async (req, res) => {
   try {
     const { pdfBase64, patientName, peso, altura, genero } = req.body;
