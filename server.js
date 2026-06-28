@@ -560,9 +560,10 @@ app.post('/api/analyze', async (req, res) => {
   try {
     const { pdfBase64, patientName, peso, altura, genero } = req.body;
     if (!pdfBase64) return res.status(400).json({ error: 'PDF nao fornecido' });
-    const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) return res.status(500).json({ error: 'API Key nao configurada' });
-    const client = new Anthropic({ apiKey });
+    //const apiKey = process.env.ANTHROPIC_API_KEY;
+    //if (!apiKey) return res.status(500).json({ error: 'API Key nao configurada' });
+    //const client = new Anthropic({ apiKey });
+    const client = new Anthropic();
 
     // ETAPA 1: Extrair TODOS os dados do PDF
     const extractMsg = await client.messages.create({
