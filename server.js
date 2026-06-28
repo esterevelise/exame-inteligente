@@ -556,48 +556,13 @@ app.get('/', (req, res) => {
   `);
 });
 
-// ===== ENDPOINT DE TESTE =====
-app.get('/api/test', (req, res) => {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  res.json({
-    status: 'OK - Servidor rodando!',
-    timestamp: new Date().toISOString(),
-    apiKeyExists: !!apiKey,
-    apiKeyPrefix: apiKey ? apiKey.substring(0, 10) + '...' : 'UNDEFINED',
-    nodeEnv: process.env.NODE_ENV,
-    port: process.env.PORT || 3001
-  });
-});
-
-app.get('/api/test', (req, res) => {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  res.json({ 
-    status: 'OK - Servidor rodando', 
-    apiKeyExists: !!apiKey,
-    apiKeyPrefix: apiKey ? apiKey.substring(0, 10) + '...' : 'UNDEFINED'
-  });
-});
 
 app.post('/api/analyze', async (req, res) => {
   try {
     const { pdfBase64, patientName, peso, altura, genero } = req.body;
     if (!pdfBase64) return res.status(400).json({ error: 'PDF nao fornecido' });
     
-    // Debug: verificar se variável existe
-    const apiKey = process.env.ANTHROPIC_API_KEY;
-    console.log('🔍 DEBUG - ANTHROPIC_API_KEY existe?', !!apiKey);
-    console.log('🔍 DEBUG - Primeiros 10 chars:', apiKey ? apiKey.substring(0, 10) + '...' : 'UNDEFINED');
-    console.log('🔍 DEBUG - Todas as env vars com ANTHROPIC:', Object.keys(process.env).filter(k => k.includes('ANTHROPIC')));
-    
-    if (!apiKey) {
-      console.error('❌ ERRO CRÍTICO: ANTHROPIC_API_KEY não definida no ambiente!');
-      return res.status(500).json({ 
-        error: 'API Key nao configurada no servidor',
-        debug: 'Verifique Environment Variables no Runway/Railway'
-      });
-    }
-    
-    const client = new Anthropic({ apiKey });
+    const client = new Anthropic(); // SDK vai ler ANTHROPIC_API_KEY automaticamente
 
     // ETAPA 1: Extrair TODOS os dados do PDF
     const extractMsg = await client.messages.create({
