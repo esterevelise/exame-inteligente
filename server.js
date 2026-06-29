@@ -320,9 +320,9 @@ function buildHTML(patientName, conteudo, dateToday) {
       .print-btn { font-size: 12px; padding: 10px; }
     }
     
-    .rh{padding:20px 28px 16px;border-bottom:2px solid var(--teal);display:flex;justify-content:space-between;align-items:center;}
-    .rh-info{text-align:right;}
-    .rh-title{font-family:var(--fd);font-size:14px;font-weight:600;color:var(--teal);margin-bottom:5px;}
+    .rh{padding:30px 28px 20px;border-bottom:2px solid var(--teal);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:15px;}
+    .rh-info{text-align:center;}
+    .rh-title{font-family:var(--fd);font-size:18px;font-weight:600;color:var(--teal);margin-bottom:8px;}
     .rh-meta{font-size:10px;color:var(--n600);line-height:1.8;}
     .ps{background:var(--n50);border-bottom:1px solid var(--n200);padding:14px 28px;}
     .ps-name{font-family:var(--fd);font-size:16px;font-weight:600;color:var(--n800);margin-bottom:3px;border-left:4px solid var(--orange);padding-left:10px;}
@@ -369,7 +369,7 @@ function buildHTML(patientName, conteudo, dateToday) {
 <body>
   <div class="page">
     <div class="rh">
-      <img src="${LOGO_B64}" style="height:140px; max-width:320px; object-fit:contain;" alt="LabDoctor Logo">
+      <img src="${LOGO_B64}" style="height:200px; max-width:400px; object-fit:contain;" alt="LabDoctor Logo">
       <div class="rh-info">
         <div class="rh-title">Relatorio de Analise Laboratorial</div>
         <div class="rh-meta">Emitido em: ${dateToday}</div>
