@@ -253,7 +253,7 @@ if (imc > 30) {
         <strong>Altura:</strong> ${altura}cm | <strong>Peso:</strong> ${peso}kg | <strong>IMC:</strong> <span style="color: ${cor}; font-weight: bold; font-size: 16px;">${imc}</span>
       </div>
       <div style="text-align: center; margin: 20px 0;">
-        <img src="data:image/jpeg;base64,${imagem}" style="max-width: 480px; width: 100%; height: auto; border-radius: 8px;">
+        <img src="data:image/jpeg;base64,${imagem}" style="max-width: 480px; width: 100%; height: 200px; border-radius: 8px;">
       </div>
       <div style="text-align: center; margin: 15px 0;">
         <span style="background: ${cor}; color: white; padding: 8px 16px; border-radius: 6px; display: inline-block; font-weight: bold;">
