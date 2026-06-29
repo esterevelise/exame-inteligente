@@ -369,7 +369,8 @@ function buildHTML(patientName, conteudo, dateToday) {
 <body>
   <div class="page">
     <div class="rh">
-      <img src="${LOGO_B64}" style="height:320px; max-width:600px; object-fit:contain;" alt="LabDoctor Logo">
+      //<img src="${LOGO_B64}" style="height:320px; max-width:600px; object-fit:contain;" alt="LabDoctor Logo">
+      <img src="${LOGO_B64}" style="width:60%; max-width:500px; height:auto; display:block; margin:0 auto;" alt="LabDoctor Logo">
       <div class="rh-info">
         <div class="rh-title">Relatorio de Analise Laboratorial</div>
         <div class="rh-meta">Emitido em: ${dateToday}</div>
