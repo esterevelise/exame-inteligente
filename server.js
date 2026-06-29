@@ -468,7 +468,17 @@ app.get('/', (req, res) => {
 
           <div id="resultado" class="resultado">
             <h3 style="margin-bottom: 15px; color: #117878;">📋 Relatório Gerado</h3>
-            <iframe id="reportFrame"></iframe>
+            <iframe 
+            id="reportFrame"
+            style="
+            width: 100%;
+            height: 900px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: auto;
+            display: block;
+            "
+            ></iframe>
           </div>
         </div>
 
@@ -550,6 +560,18 @@ app.get('/', (req, res) => {
           erroDiv.textContent = '❌ ' + msg;
           erroDiv.classList.add('show');
         }
+
+        // Auto-adjust iframe height based on content
+        document.getElementById('reportFrame').onload = function() {
+          try {
+            const doc = this.contentDocument || this.contentWindow.document;
+            const height = doc.body.scrollHeight + 50;
+            this.style.height = height + 'px';
+          } catch(e) {
+            console.log('Iframe height adjustment: ', e);
+          }
+        };
+        
       </script>
     </body>
     </html>
