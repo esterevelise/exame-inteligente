@@ -367,15 +367,14 @@ function buildHTML(patientName, conteudo, dateToday) {
   </style>
 </head>
 <body>
-  <div class="rh" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px 40px; border-bottom:2px solid var(--teal-light);">
-    <img src="${LOGO_B64}" 
-       style="width:240px; height:auto; display:block; object-fit:contain; margin-bottom:16px;" 
-       alt="LabDoctor Logo">
-    <div class="rh-info" style="text-align:center;">
-      <div class="rh-title">Relatorio de Analise Laboratorial</div>
-      <div class="rh-meta">Emitido em: ${dateToday}</div>
+<div class="page">
+    <div class="rh">
+      <img src="${LOGO_B64}" style="width:300px; height:auto;" alt="LabDoctor Logo">
+      <div class="rh-info">
+        <div class="rh-title">Relatorio de Analise Laboratorial</div>
+        <div class="rh-meta">Emitido em: ${dateToday}</div>
+      </div>
     </div>
-  </div>
     ${conteudo}
     <div class="rf">
       <div class="rf-l">LabDoctor - Analise Laboratorial por IA </div>
