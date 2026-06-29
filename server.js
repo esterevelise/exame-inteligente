@@ -284,6 +284,9 @@ function buildHTML(patientName, conteudo, dateToday) {
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:var(--fb);background:#F5F1E8;color:var(--n800);font-size:12px;line-height:1.5;}
     .page{width:210mm;min-height:297mm;margin:16px auto;background:white;box-shadow:0 2px 16px rgba(0,0,0,0.15);overflow:hidden;}
+    @media (max-width: 900px) {
+      .page { width: 100%; min-height: auto; margin: 10px; box-shadow: 0 1px 8px rgba(0,0,0,0.1); }
+    }
     .rh{padding:20px 28px 16px;border-bottom:2px solid var(--teal);display:flex;justify-content:space-between;align-items:center;}
 
     .rh-info{text-align:right;}
@@ -326,7 +329,7 @@ function buildHTML(patientName, conteudo, dateToday) {
     .rf{border-top:1px solid var(--n200);padding:12px 28px;display:flex;justify-content:space-between;align-items:center;background:var(--n50);}
     .rf-l{font-size:10px;color:var(--teal);font-weight:500;line-height:1.7;}
     .rf-r{font-size:9px;color:var(--n400);text-align:right;line-height:1.7;}
-    .print-btn{position:fixed;bottom:20px;right:20px;padding:11px 22px;background:var(--orange);color:white;border:none;border-radius:999px;cursor:pointer;font-family:var(--fb);font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(245,124,0,0.4);z-index:100;}
+    .print-btn{position:fixed;bottom:20px;right:20px;padding:12px 24px;background:var(--orange);color:white;border:none;border-radius:8px;cursor:pointer;font-family:var(--fb);font-size:14px;font-weight:600;box-shadow:0 4px 14px rgba(245,124,0,0.4);z-index:100;white-space:nowrap;}
     .print-btn:hover{background:var(--orange-dark);}
     @media print{body{background:white;}.page{margin:0;box-shadow:none;width:100%;}.print-btn{display:none;}}
   </style>
@@ -472,12 +475,12 @@ app.get('/', (req, res) => {
               id="reportContainer"
               style="
                 width: 100%;
+                max-width: 1200px;
                 border: 1px solid #ddd;
                 border-radius: 8px;
                 overflow: auto;
                 display: block;
                 background: white;
-                padding: 20px;
               "
             ></div>
           </div>
