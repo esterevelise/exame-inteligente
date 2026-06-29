@@ -293,7 +293,7 @@ function buildHTML(patientName, conteudo, dateToday) {
       body { font-size: 11px; }
       .page { margin: 4px; padding: 0; }
       .rh { padding: 12px 16px !important; flex-direction: column; text-align: center; }
-      .rh img { max-height: 100px; margin-bottom: 10px; }
+      .rh img { width: 200px; height: auto; margin-bottom: 10px; }
       .rh-info { text-align: center; }
       .ps-fields { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
       .ss { grid-template-columns: repeat(2, 1fr) !important; }
@@ -307,7 +307,7 @@ function buildHTML(patientName, conteudo, dateToday) {
     @media (max-width: 480px) {
       body { font-size: 10px; }
       .rh { padding: 10px 12px !important; }
-      .rh img { max-height: 80px; }
+      .rh img { width: 160px; height: auto; }
       .ps-fields { grid-template-columns: 1fr !important; }
       .ss { grid-template-columns: 1fr !important; }
       .sb { padding: 8px; border-right: none; border-bottom: 1px solid var(--n200); }
@@ -369,8 +369,7 @@ function buildHTML(patientName, conteudo, dateToday) {
 <body>
   <div class="page">
     <div class="rh">
-      //<img src="${LOGO_B64}" style="height:320px; max-width:600px; object-fit:contain;" alt="LabDoctor Logo">
-      <img src="${LOGO_B64}" style="width:60%; max-width:500px; height:auto; display:block; margin:0 auto;" alt="LabDoctor Logo">
+      <img src="${LOGO_B64}" style="width:280px; height:auto; display:block; margin:0 auto;" alt="LabDoctor Logo">
       <div class="rh-info">
         <div class="rh-title">Relatorio de Analise Laboratorial</div>
         <div class="rh-meta">Emitido em: ${dateToday}</div>
