@@ -468,17 +468,18 @@ app.get('/', (req, res) => {
 
           <div id="resultado" class="resultado">
             <h3 style="margin-bottom: 15px; color: #117878;">📋 Relatório Gerado</h3>
-            <iframe 
-            id="reportFrame"
-            style="
-            width: 100%;
-            height: 900px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: auto;
-            display: block;
-            "
-            ></iframe>
+            <div 
+              id="reportContainer"
+              style="
+                width: 100%;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                overflow: auto;
+                display: block;
+                background: white;
+                padding: 20px;
+              "
+            ></div>
           </div>
         </div>
 
@@ -537,12 +538,9 @@ app.get('/', (req, res) => {
 
               const data = await response.json();
               if (data.success && data.html) {
-                // Decodificar base64 e exibir
+                // Decodificar base64 e exibir diretamente
                 const htmlContent = atob(data.html);
-                const blob = new Blob([htmlContent], { type: 'text/html' });
-                const url = URL.createObjectURL(blob);
-                
-                document.getElementById('reportFrame').src = url;
+                document.getElementById('reportContainer').innerHTML = htmlContent;
                 document.getElementById('resultado').classList.add('show');
               } else {
                 showError('Erro: resposta inválida do servidor');
@@ -560,18 +558,6 @@ app.get('/', (req, res) => {
           erroDiv.textContent = '❌ ' + msg;
           erroDiv.classList.add('show');
         }
-
-        // Auto-adjust iframe height based on content
-        document.getElementById('reportFrame').onload = function() {
-          try {
-            const doc = this.contentDocument || this.contentWindow.document;
-            const height = doc.body.scrollHeight + 50;
-            this.style.height = height + 'px';
-          } catch(e) {
-            console.log('Iframe height adjustment: ', e);
-          }
-        };
-        
       </script>
     </body>
     </html>
