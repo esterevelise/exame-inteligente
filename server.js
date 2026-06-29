@@ -283,12 +283,44 @@ function buildHTML(patientName, conteudo, dateToday) {
     :root{--teal:#00838F;--teal-dark:#006064;--teal-light:#E0F7F4;--orange:#F57C00;--orange-dark:#E65100;--orange-100:#FFE0B2;--n50:#FAFAF9;--n100:#F5F4F1;--n200:#E8E7E3;--n400:#9E9D97;--n600:#5F5E5A;--n800:#2C2C2A;--c-bg:#FEECEB;--c-text:#8B2020;--c-dot:#C62828;--a-bg:#FFF8E1;--a-text:#7A5C00;--a-dot:#F9A825;--l-bg:#FFFDE7;--l-text:#5D4037;--l-dot:#FBC02D;--ok-bg:#EAF6EF;--ok-text:#1B6B3A;--ok-dot:#2E7D32;--fd:'Playfair Display',Georgia,serif;--fb:'DM Sans',system-ui,sans-serif;}
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:var(--fb);background:#F5F1E8;color:var(--n800);font-size:12px;line-height:1.5;}
-    .page{width:210mm;min-height:297mm;margin:16px auto;background:white;box-shadow:0 2px 16px rgba(0,0,0,0.15);overflow:hidden;}
-    @media (max-width: 900px) {
-      .page { width: 100%; min-height: auto; margin: 10px; box-shadow: 0 1px 8px rgba(0,0,0,0.1); }
+    .page{width:100%;max-width:960px;min-height:297mm;margin:16px auto;background:white;box-shadow:0 2px 16px rgba(0,0,0,0.15);padding:0;}
+    
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .page { max-width: 100%; margin: 8px; box-shadow: 0 1px 8px rgba(0,0,0,0.1); }
     }
+    @media (max-width: 768px) {
+      body { font-size: 11px; }
+      .page { margin: 4px; padding: 0; }
+      .rh { padding: 12px 16px !important; flex-direction: column; text-align: center; }
+      .rh img { max-height: 100px; margin-bottom: 10px; }
+      .rh-info { text-align: center; }
+      .ps-fields { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
+      .ss { grid-template-columns: repeat(2, 1fr) !important; }
+      .sb { padding: 10px; font-size: 11px; }
+      .sb-num { font-size: 24px; }
+      .ts { padding: 12px 16px !important; }
+      table { font-size: 10px; }
+      th, td { padding: 5px 6px; }
+      .print-btn { width: 90%; margin: 10px 5%; padding: 12px; font-size: 13px; }
+    }
+    @media (max-width: 480px) {
+      body { font-size: 10px; }
+      .rh { padding: 10px 12px !important; }
+      .rh img { max-height: 80px; }
+      .ps-fields { grid-template-columns: 1fr !important; }
+      .ss { grid-template-columns: 1fr !important; }
+      .sb { padding: 8px; border-right: none; border-bottom: 1px solid var(--n200); }
+      .sb:last-child { border-bottom: none; }
+      .sb-num { font-size: 20px; }
+      .sb-label { font-size: 8px; }
+      .ts { padding: 10px 12px !important; }
+      table { font-size: 9px; }
+      th, td { padding: 4px 5px; }
+      .print-btn { font-size: 12px; padding: 10px; }
+    }
+    
     .rh{padding:20px 28px 16px;border-bottom:2px solid var(--teal);display:flex;justify-content:space-between;align-items:center;}
-
     .rh-info{text-align:right;}
     .rh-title{font-family:var(--fd);font-size:14px;font-weight:600;color:var(--teal);margin-bottom:5px;}
     .rh-meta{font-size:10px;color:var(--n600);line-height:1.8;}
@@ -329,13 +361,12 @@ function buildHTML(patientName, conteudo, dateToday) {
     .rf{border-top:1px solid var(--n200);padding:12px 28px;display:flex;justify-content:space-between;align-items:center;background:var(--n50);}
     .rf-l{font-size:10px;color:var(--teal);font-weight:500;line-height:1.7;}
     .rf-r{font-size:9px;color:var(--n400);text-align:right;line-height:1.7;}
-    .print-btn{position:fixed;bottom:20px;right:20px;padding:12px 24px;background:var(--orange);color:white;border:none;border-radius:8px;cursor:pointer;font-family:var(--fb);font-size:14px;font-weight:600;box-shadow:0 4px 14px rgba(245,124,0,0.4);z-index:100;white-space:nowrap;}
+    .print-btn{width:100%;padding:14px 20px;background:var(--orange);color:white;border:none;border-radius:0;cursor:pointer;font-family:var(--fb);font-size:14px;font-weight:600;margin-top:10px;transition:background 0.3s;}
     .print-btn:hover{background:var(--orange-dark);}
     @media print{body{background:white;}.page{margin:0;box-shadow:none;width:100%;}.print-btn{display:none;}}
   </style>
 </head>
 <body>
-  <button class="print-btn" onclick="window.print()">Imprimir / Salvar PDF</button>
   <div class="page">
     <div class="rh">
       <img src="${LOGO_B64}" style="height:140px; max-width:320px; object-fit:contain;" alt="LabDoctor Logo">
@@ -349,6 +380,7 @@ function buildHTML(patientName, conteudo, dateToday) {
       <div class="rf-l">LabDoctor - Analise Laboratorial por IA </div>
       <div class="rf-r">Relatorio baseado em valores ideais.<br>Nao substitui avaliacao clinica presencial.</div>
     </div>
+    <button class="print-btn" onclick="window.print()">Imprimir / Salvar PDF</button>
   </div>
 </body>
 </html>`;
@@ -471,18 +503,17 @@ app.get('/', (req, res) => {
 
           <div id="resultado" class="resultado">
             <h3 style="margin-bottom: 15px; color: #117878;">📋 Relatório Gerado</h3>
-            <div 
-              id="reportContainer"
-              style="
-                width: 100%;
-                max-width: 1200px;
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                overflow: auto;
-                display: block;
-                background: white;
-              "
-            ></div>
+            <iframe 
+            id="reportFrame"
+            style="
+            width: 100%;
+            height: 900px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: auto;
+            display: block;
+            "
+            ></iframe>
           </div>
         </div>
 
@@ -541,9 +572,12 @@ app.get('/', (req, res) => {
 
               const data = await response.json();
               if (data.success && data.html) {
-                // Decodificar base64 e exibir diretamente
+                // Decodificar base64 e exibir
                 const htmlContent = atob(data.html);
-                document.getElementById('reportContainer').innerHTML = htmlContent;
+                const blob = new Blob([htmlContent], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                
+                document.getElementById('reportFrame').src = url;
                 document.getElementById('resultado').classList.add('show');
               } else {
                 showError('Erro: resposta inválida do servidor');
@@ -561,6 +595,18 @@ app.get('/', (req, res) => {
           erroDiv.textContent = '❌ ' + msg;
           erroDiv.classList.add('show');
         }
+
+        // Auto-adjust iframe height based on content
+        document.getElementById('reportFrame').onload = function() {
+          try {
+            const doc = this.contentDocument || this.contentWindow.document;
+            const height = doc.body.scrollHeight + 50;
+            this.style.height = height + 'px';
+          } catch(e) {
+            console.log('Iframe height adjustment: ', e);
+          }
+        };
+        
       </script>
     </body>
     </html>
