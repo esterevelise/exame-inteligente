@@ -323,10 +323,11 @@ function buildHTML(patientName, conteudo, dateToday) {
       .imc-stats { flex-wrap: wrap; gap: 16px; }
     }
 
-    .rh{padding:28px 48px 22px;border-bottom:2px solid var(--teal);display:flex;align-items:center;justify-content:space-between;gap:24px;}
+    .rh-bar{height:6px;background:linear-gradient(90deg,var(--teal) 0%,var(--teal-2) 60%,#3E9189 100%);}
+    .rh{padding:26px 44px 22px;border-bottom:1px solid var(--n200);display:flex;align-items:center;justify-content:space-between;gap:24px;}
     .rh-info{text-align:right;}
-    .rh-title{font-family:var(--fd);font-size:17px;font-weight:600;color:var(--teal);letter-spacing:0.01em;}
-    .rh-meta{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--n400);margin-top:5px;line-height:1.6;}
+    .rh-title{font-family:var(--fd);font-size:16px;font-weight:600;color:var(--teal);}
+    .rh-meta{font-size:10px;color:var(--n400);margin-top:4px;line-height:1.7;}
     .ps{background:var(--teal-tint);border-bottom:1px solid var(--n200);padding:20px 48px;}
     .ps-name{font-family:var(--fd);font-size:19px;font-weight:600;color:var(--ink);border-left:3px solid var(--teal-2);padding-left:12px;line-height:1.2;}
     .ps-sub{font-size:11px;color:var(--n400);padding-left:15px;margin-top:3px;}
@@ -383,8 +384,9 @@ function buildHTML(patientName, conteudo, dateToday) {
 </head>
 <body>
 <div class="page">
+    <div class="rh-bar"></div>
     <div class="rh">
-      <img src="${LOGO_B64}" style="width:200px; height:auto; mix-blend-mode:multiply;" alt="LabDoctor Logo">
+      <img src="${LOGO_B64}" style="width:190px; height:auto; mix-blend-mode:multiply;" alt="LabDoctor Logo">
       <div class="rh-info">
         <div class="rh-title">Relatorio de Analise Laboratorial</div>
         <div class="rh-meta">Emitido em: ${dateToday}</div>
