@@ -230,40 +230,56 @@ function calcularIMC(peso, altura) {
   return { imc: parseFloat(imc.toFixed(2)), classificacao, cor, emoji };
 }
 
-// Função para gerar HTML do IMC
+// Função para gerar HTML do IMC (regua limpa, sem ilustracao)
 function gerarHTMLIMC(peso, altura, genero, nomeP) {
-  const { imc, classificacao, cor, emoji } = calcularIMC(peso, altura);
-  const imagem = genero === 'F' ? IMC_MULHER_B64 : IMC_HOMEM_B64;
-  
+  const { imc, classificacao } = calcularIMC(peso, altura);
+  const imcStr = String(imc).replace('.', ',');
+  const pos = Math.max(2, Math.min(98, ((imc - 15) / 25) * 100)).toFixed(1);
+
+  let bg, txt, dotc;
+  if (imc < 18.5)      { bg = 'var(--a-bg)';  txt = 'var(--a-text)';  dotc = 'var(--a-dot)'; }
+  else if (imc < 25)   { bg = 'var(--ok-bg)'; txt = 'var(--ok-text)'; dotc = 'var(--ok-dot)'; }
+  else if (imc < 30)   { bg = 'var(--a-bg)';  txt = 'var(--a-text)';  dotc = 'var(--a-dot)'; }
+  else                 { bg = 'var(--c-bg)';  txt = 'var(--c-text)';  dotc = 'var(--c-dot)'; }
+
   let orientacao;
-if (imc > 30) {
-  orientacao = 'Obesidade detectada - avaliar resistencia insulinica, inflamacao sistemica, cortisol';
-} else if (imc > 25) {
-  orientacao = 'Sobrepeso - recomenda-se analise metabolomica + movimento estruturado';
-} else if (imc >= 18.5) {
-  orientacao = 'Peso dentro do ideal - manter protocolos atuais';
-} else {
-  orientacao = 'Abaixo do peso - avaliar absorcao intestinal + ingestao proteica';
-}
-  
+  if (imc >= 30)        orientacao = 'Obesidade detectada - avaliar resistencia insulinica, inflamacao sistemica e cortisol';
+  else if (imc >= 25)   orientacao = 'Sobrepeso - recomenda-se analise metabolica e movimento estruturado';
+  else if (imc >= 18.5) orientacao = 'Peso dentro do ideal - manter protocolos atuais';
+  else                  orientacao = 'Abaixo do peso - avaliar absorcao intestinal e ingestao proteica';
+
   return `
-    <div style="margin: 30px 0; padding: 20px; background: #f0f8f8; border-radius: 12px; border-left: 4px solid #117878;">
-      <h3 style="color: #117878; margin-top: 0;">IMC — ${nomeP}</h3>
-      <div style="margin-bottom: 15px; font-size: 14px; color: #555;">
-        <strong>Altura:</strong> ${altura}cm | <strong>Peso:</strong> ${peso}kg | <strong>IMC:</strong> <span style="color: ${cor}; font-weight: bold; font-size: 16px;">${imc}</span>
+    <div class="imc">
+      <div class="sh">Indice de Massa Corporal</div>
+      <div class="imc-row">
+        <div class="imc-stats">
+          <div><div class="pf-label">Altura</div><div class="pf-value">${altura} cm</div></div>
+          <div><div class="pf-label">Peso</div><div class="pf-value">${peso} kg</div></div>
+          <div><div class="pf-label">IMC</div><div class="pf-value" style="color:${dotc};font-weight:700;">${imcStr} kg/m2</div></div>
+        </div>
+        <span class="badge" style="background:${bg};color:${txt};font-size:11px;padding:5px 13px;"><span class="dot" style="background:${dotc};width:7px;height:7px;"></span>${classificacao}</span>
       </div>
-      <div style="text-align: center; margin: 20px 0;">
-        <img src="data:image/jpeg;base64,${imagem}" style="max-width: 480px; width: 100%; height: 200px; border-radius: 8px;">
+      <div class="imc-meter">
+        <div class="imc-pin" style="left:${pos}%;">
+          <div class="imc-pin-val">${imcStr}</div>
+          <div class="imc-pin-arrow"></div>
+        </div>
+        <div class="imc-track">
+          <div style="width:14%;background:#6FA8C7;"></div>
+          <div style="width:26%;background:var(--ok-dot);"></div>
+          <div style="width:20%;background:var(--l-dot);"></div>
+          <div style="width:20%;background:var(--a-dot);"></div>
+          <div style="width:20%;background:var(--c-dot);"></div>
+        </div>
+        <div class="imc-scale">
+          <div style="width:14%;">Baixo</div>
+          <div style="width:26%;">Normal</div>
+          <div style="width:20%;">Sobrepeso</div>
+          <div style="width:20%;">Obes. I</div>
+          <div style="width:20%;">Obes. II+</div>
+        </div>
       </div>
-      <div style="text-align: center; margin: 15px 0;">
-        <span style="background: ${cor}; color: white; padding: 8px 16px; border-radius: 6px; display: inline-block; font-weight: bold;">
-          ${emoji} ${classificacao}
-        </span>
-      </div>
-      <div style="margin-top: 15px; padding: 12px; background: white; border-radius: 8px; color: #333; font-size: 13px; border-left: 4px solid ${cor};">
-        <strong style="color: ${cor};">Recomendacao Funcional:</strong><br/>
-        <span style="color: #555; line-height: 1.5;">${orientacao}</span>
-      </div>
+      <div class="imc-note"><strong>Recomendacao funcional:</strong> ${orientacao}</div>
     </div>
   `;
 }
@@ -275,101 +291,100 @@ function buildHTML(patientName, conteudo, dateToday) {
   <meta charset="UTF-8"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Relatorio LabDoctor - ${patientName}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-        @page { margin: 15mm; }
-    body { font-family: Georgia, serif; line-height: 1.6; }
-    table { border-collapse: collapse; }
-    :root{--teal:#00838F;--teal-dark:#006064;--teal-light:#E0F7F4;--orange:#F57C00;--orange-dark:#E65100;--orange-100:#FFE0B2;--n50:#FAFAF9;--n100:#F5F4F1;--n200:#E8E7E3;--n400:#9E9D97;--n600:#5F5E5A;--n800:#2C2C2A;--c-bg:#FEECEB;--c-text:#8B2020;--c-dot:#C62828;--a-bg:#FFF8E1;--a-text:#7A5C00;--a-dot:#F9A825;--l-bg:#FFFDE7;--l-text:#5D4037;--l-dot:#FBC02D;--ok-bg:#EAF6EF;--ok-text:#1B6B3A;--ok-dot:#2E7D32;--fd:'Playfair Display',Georgia,serif;--fb:'DM Sans',system-ui,sans-serif;}
+    @page { margin: 14mm; }
+    :root{--teal:#0E5C5C;--teal-2:#14746F;--teal-line:#CFE3DE;--teal-tint:#F2F8F6;--ink:#16302F;--n800:#1F2A2A;--n600:#5A6663;--n400:#9AA8A4;--n200:#E0EBE8;--n-row:#EDF3F1;--c-bg:#FBEAEA;--c-text:#9A2A2A;--c-dot:#C0392B;--a-bg:#FBF1E0;--a-text:#8A5A12;--a-dot:#D98A2B;--l-bg:#FAF6E3;--l-text:#7A6A1E;--l-dot:#C9A227;--ok-bg:#E8F3EC;--ok-text:#1E6B43;--ok-dot:#2E8B57;--fd:'Source Serif 4',Georgia,serif;--fb:'IBM Plex Sans',system-ui,sans-serif;}
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:var(--fb);background:#F5F1E8;color:var(--n800);font-size:12px;line-height:1.5;}
-    .page{width:100%;max-width:960px;min-height:297mm;margin:16px auto;background:white;box-shadow:0 2px 16px rgba(0,0,0,0.15);padding:0;}
-    
+    body{font-family:var(--fb);background:#E6EEEC;color:var(--n800);font-size:12px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+    .page{width:100%;max-width:794px;min-height:297mm;margin:16px auto;background:#fff;box-shadow:0 6px 30px rgba(14,60,60,0.12);border-radius:4px;overflow:hidden;}
+
     /* Responsive */
-    @media (max-width: 1024px) {
-      .page { max-width: 100%; margin: 8px; box-shadow: 0 1px 8px rgba(0,0,0,0.1); }
-    }
+    @media (max-width: 1024px) { .page { max-width: 100%; margin: 8px; box-shadow: 0 2px 10px rgba(14,60,60,0.10); } }
     @media (max-width: 768px) {
       body { font-size: 11px; }
-      .page { margin: 4px; padding: 0; }
-      .rh { padding: 12px 16px !important; flex-direction: column; text-align: center; }
-      .rh img { max-height: 100px; margin-bottom: 10px; }
-      .rh-info { text-align: center; }
-      .ps-fields { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
+      .page { margin: 4px; }
+      .rh { padding: 18px 18px !important; flex-direction: column; text-align: center; gap: 12px; }
+      .rh-info { text-align: center !important; }
+      .ps, .ts, .als, .imc, .rf { padding-left: 18px !important; padding-right: 18px !important; }
+      .ps-fields { grid-template-columns: repeat(2, 1fr) !important; gap: 10px; }
       .ss { grid-template-columns: repeat(2, 1fr) !important; }
-      .sb { padding: 10px; font-size: 11px; }
-      .sb-num { font-size: 24px; }
-      .ts { padding: 12px 16px !important; }
+      .sb-num { font-size: 26px; }
       table { font-size: 10px; }
-      th, td { padding: 5px 6px; }
-      .print-btn { width: 90%; margin: 10px 5%; padding: 12px; font-size: 13px; }
+      th, td { padding: 6px 6px; }
+      .imc-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .print-btn { width: 90%; margin: 10px 5%; }
     }
     @media (max-width: 480px) {
-      body { font-size: 10px; }
-      .rh { padding: 10px 12px !important; }
-      .rh img { max-height: 80px; }
       .ps-fields { grid-template-columns: 1fr !important; }
       .ss { grid-template-columns: 1fr !important; }
-      .sb { padding: 8px; border-right: none; border-bottom: 1px solid var(--n200); }
+      .sb { border-right: none; border-bottom: 1px solid var(--n200); }
       .sb:last-child { border-bottom: none; }
-      .sb-num { font-size: 20px; }
-      .sb-label { font-size: 8px; }
-      .ts { padding: 10px 12px !important; }
-      table { font-size: 9px; }
-      th, td { padding: 4px 5px; }
-      .print-btn { font-size: 12px; padding: 10px; }
+      .imc-stats { flex-wrap: wrap; gap: 16px; }
     }
-    
-    .rh{padding:30px 28px 20px;border-bottom:2px solid var(--teal);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:15px;}
-    .rh-info{text-align:center;}
-    .rh-title{font-family:var(--fd);font-size:18px;font-weight:600;color:var(--teal);margin-bottom:8px;}
-    .rh-meta{font-size:10px;color:var(--n600);line-height:1.8;}
-    .ps{background:var(--n50);border-bottom:1px solid var(--n200);padding:14px 28px;}
-    .ps-name{font-family:var(--fd);font-size:16px;font-weight:600;color:var(--n800);margin-bottom:3px;border-left:4px solid var(--orange);padding-left:10px;}
-    .ps-sub{font-size:10px;color:var(--n400);margin-bottom:10px;padding-left:14px;}
-    .ps-fields{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
-    .pf-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--n400);margin-bottom:2px;}
-    .pf-value{font-size:11px;font-weight:500;color:var(--n800);}
+
+    .rh{padding:28px 48px 22px;border-bottom:2px solid var(--teal);display:flex;align-items:center;justify-content:space-between;gap:24px;}
+    .rh-info{text-align:right;}
+    .rh-title{font-family:var(--fd);font-size:17px;font-weight:600;color:var(--teal);letter-spacing:0.01em;}
+    .rh-meta{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--n400);margin-top:5px;line-height:1.6;}
+    .ps{background:var(--teal-tint);border-bottom:1px solid var(--n200);padding:20px 48px;}
+    .ps-name{font-family:var(--fd);font-size:19px;font-weight:600;color:var(--ink);border-left:3px solid var(--teal-2);padding-left:12px;line-height:1.2;}
+    .ps-sub{font-size:11px;color:var(--n400);padding-left:15px;margin-top:3px;}
+    .ps-fields{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:16px;padding-left:15px;}
+    .pf-label{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--n400);margin-bottom:3px;}
+    .pf-value{font-size:12px;font-weight:500;color:var(--ink);}
     .ss{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--n200);}
-    .sb{padding:14px;text-align:center;border-right:1px solid var(--n200);}
+    .sb{padding:18px 14px;text-align:center;border-right:1px solid #E8F0EE;}
     .sb:last-child{border-right:none;}
     .sb-num{font-family:var(--fd);font-size:32px;font-weight:700;line-height:1;}
-    .sb-label{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:4px;}
-    .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;display:inline-block;}
-    .ts{padding:16px 28px;}
-    .sh{font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--teal-light);}
-    table{width:100%;border-collapse:collapse;font-size:11px;}
-    th{padding:7px 8px;text-align:left;font-size:9px;font-weight:700;color:var(--n400);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--n200);white-space:nowrap;background:var(--n50);}
-    td{padding:8px 8px;border-bottom:1px solid var(--n200);vertical-align:middle;}
+    .sb-label{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:5px;color:var(--n600);}
+    .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;display:inline-block;}
+    .ts{padding:22px 48px 8px;}
+    .sh{font-size:9.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--teal);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--teal-line);}
+    table{width:100%;border-collapse:collapse;font-size:11.5px;}
+    th{padding:8px 8px;text-align:left;font-size:8.5px;font-weight:700;color:var(--n400);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1.5px solid #D7E5E2;white-space:nowrap;}
+    th:nth-child(3),th:nth-child(4){text-align:center;}
+    td{padding:9px 8px;border-bottom:1px solid var(--n-row);vertical-align:middle;}
     tr:last-child td{border-bottom:none;}
-    .tm{font-weight:500;color:var(--n800);}
+    .tm{font-weight:500;color:var(--ink);}
     .tv{font-weight:600;white-space:nowrap;}
-    .tref{color:var(--n400);white-space:nowrap;font-size:10px;}
-    .tobs{font-size:10px;color:var(--n600);line-height:1.4;}
-    .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:999px;font-size:9px;font-weight:700;white-space:nowrap;}
+    .tref{color:var(--n400);white-space:nowrap;font-size:10.5px;text-align:center;}
+    .tobs{font-size:10.5px;color:var(--n600);line-height:1.45;}
+    .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:9.5px;font-weight:600;white-space:nowrap;}
     .bc{background:var(--c-bg);color:var(--c-text);} .bc .dot{background:var(--c-dot);}
     .ba{background:var(--a-bg);color:var(--a-text);} .ba .dot{background:var(--a-dot);}
     .bl{background:var(--l-bg);color:var(--l-text);} .bl .dot{background:var(--l-dot);}
     .bn{background:var(--ok-bg);color:var(--ok-text);} .bn .dot{background:var(--ok-dot);}
-    .als{padding:0 28px 16px;}
-    .alh{font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--orange);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--orange-100);}
-    .ali{border-radius:8px;padding:10px 12px;margin-bottom:7px;border-left:3px solid;}
+    .als{padding:6px 48px 22px;}
+    .alh{font-size:9.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--c-dot);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid #F1D9D9;}
+    .ali{border-radius:7px;padding:11px 14px;margin-bottom:8px;border-left:3px solid;}
     .ali-c{background:var(--c-bg);border-color:var(--c-dot);}
     .ali-a{background:var(--a-bg);border-color:var(--a-dot);}
-    .ali-t{font-weight:600;font-size:11px;color:var(--n800);margin-bottom:3px;}
-    .ali-b{font-size:10px;color:var(--n600);line-height:1.6;}
-    .rf{border-top:1px solid var(--n200);padding:12px 28px;display:flex;justify-content:space-between;align-items:center;background:var(--n50);}
-    .rf-l{font-size:10px;color:var(--teal);font-weight:500;line-height:1.7;}
-    .rf-r{font-size:9px;color:var(--n400);text-align:right;line-height:1.7;}
-    .print-btn{width:100%;padding:14px 20px;background:var(--orange);color:white;border:none;border-radius:0;cursor:pointer;font-family:var(--fb);font-size:14px;font-weight:600;margin-top:10px;transition:background 0.3s;}
-    .print-btn:hover{background:var(--orange-dark);}
-    @media print{body{background:white;}.page{margin:0;box-shadow:none;width:100%;}.print-btn{display:none;}}
+    .ali-t{font-weight:600;font-size:11.5px;color:var(--ink);margin-bottom:3px;}
+    .ali-b{font-size:10.5px;color:var(--n600);line-height:1.55;}
+    .imc{padding:14px 48px 22px;}
+    .imc-row{display:flex;align-items:center;justify-content:space-between;margin:12px 0 18px;}
+    .imc-stats{display:flex;gap:26px;}
+    .imc-meter{position:relative;padding-top:30px;}
+    .imc-pin{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;}
+    .imc-pin-val{background:var(--ink);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;white-space:nowrap;}
+    .imc-pin-arrow{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--ink);}
+    .imc-track{display:flex;height:12px;border-radius:6px;overflow:hidden;}
+    .imc-scale{display:flex;margin-top:6px;font-size:8px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--n400);}
+    .imc-scale > div{text-align:center;}
+    .imc-note{margin-top:14px;font-size:10px;color:var(--n600);line-height:1.5;}
+    .rf{border-top:1px solid var(--n200);padding:14px 48px;display:flex;justify-content:space-between;align-items:center;background:var(--teal-tint);}
+    .rf-l{font-size:10px;color:var(--teal);font-weight:500;line-height:1.6;}
+    .rf-r{font-size:9px;color:var(--n400);text-align:right;line-height:1.6;}
+    .print-btn{width:100%;padding:14px 20px;background:var(--teal);color:#fff;border:none;cursor:pointer;font-family:var(--fb);font-size:14px;font-weight:600;letter-spacing:0.02em;margin-top:10px;transition:background 0.3s;}
+    .print-btn:hover{background:var(--teal-2);}
+    @media print{body{background:#fff;}.page{margin:0;box-shadow:none;border-radius:0;max-width:none;width:100%;}.print-btn{display:none;}}
   </style>
 </head>
 <body>
 <div class="page">
     <div class="rh">
-      <img src="${LOGO_B64}" style="width:300px; height:auto;" alt="LabDoctor Logo">
+      <img src="${LOGO_B64}" style="width:200px; height:auto; mix-blend-mode:multiply;" alt="LabDoctor Logo">
       <div class="rh-info">
         <div class="rh-title">Relatorio de Analise Laboratorial</div>
         <div class="rh-meta">Emitido em: ${dateToday}</div>
@@ -812,7 +827,7 @@ inner = cleanEncoding(inner);
     }
 
     // Construir HTML final: análise clínica + seção de IMC
-    const conteudoFinal = imcSection + inner;
+    const conteudoFinal = inner + imcSection;
     const html = buildHTML(dados.paciente || patientName || 'Paciente', conteudoFinal, today);
     const htmlBase64 = Buffer.from(html, 'utf-8').toString('base64');
     res.json({ success: true, html: htmlBase64 });
