@@ -254,17 +254,11 @@ function gerarHTMLIMC(peso, altura, genero, nomeP) {
   return `
     <div class="imc">
       <div class="sh">Indice de Massa Corporal</div>
-      <table style="width:100%;border-collapse:collapse;margin:12px 0 16px;"><tr>
-        <td style="vertical-align:middle;">
-          <table style="border-collapse:collapse;"><tr>
-            <td style="padding-right:30px;vertical-align:top;"><div class="pf-label">Altura</div><div class="pf-value">${altura} cm</div></td>
-            <td style="padding-right:30px;vertical-align:top;"><div class="pf-label">Peso</div><div class="pf-value">${peso} kg</div></td>
-            <td style="vertical-align:top;"><div class="pf-label">IMC</div><div class="pf-value" style="color:${dotc};font-weight:700;">${imcStr} kg/m2</div></td>
-          </tr></table>
-        </td>
-        <td style="text-align:right;vertical-align:middle;white-space:nowrap;">
-          <span style="display:inline-block;background:${bg};color:${txt};font-size:11px;font-weight:600;padding:5px 13px;border-radius:999px;">${classificacao}</span>
-        </td>
+      <table style="width:100%;border-collapse:collapse;table-layout:fixed;margin:12px 0 16px;"><tr>
+        <td style="width:22%;vertical-align:top;"><div class="pf-label">Altura</div><div class="pf-value">${altura} cm</div></td>
+        <td style="width:22%;vertical-align:top;"><div class="pf-label">Peso</div><div class="pf-value">${peso} kg</div></td>
+        <td style="width:26%;vertical-align:top;"><div class="pf-label">IMC</div><div class="pf-value" style="color:${dotc};font-weight:700;">${imcStr} kg/m2</div></td>
+        <td style="width:30%;vertical-align:middle;text-align:right;"><span style="display:inline-block;background:${bg};color:${txt};font-size:11px;font-weight:600;padding:5px 13px;border-radius:999px;">${classificacao}</span></td>
       </tr></table>
       <table style="width:100%;border-collapse:collapse;table-layout:fixed;"><tr>
         <td width="14%" bgcolor="#6FA8C7" style="background-color:#6FA8C7;height:12px;line-height:12px;font-size:1px;">&nbsp;</td>
@@ -403,9 +397,9 @@ function buildHTML(patientName, conteudo, dateToday) {
       </td>
     </tr></table>
     ${conteudo}
-    <table class="rf" style="width:100%;border-collapse:collapse;"><tr>
-      <td class="rf-l" style="text-align:left;vertical-align:middle;">LabDoctor - Analise Laboratorial por IA</td>
-      <td class="rf-r" style="text-align:right;vertical-align:middle;">Relatorio baseado em valores ideais.<br>Nao substitui avaliacao clinica presencial.</td>
+    <table class="rf" style="width:100%;border-collapse:collapse;table-layout:fixed;"><tr>
+      <td class="rf-l" style="width:52%;text-align:left;vertical-align:middle;">LabDoctor - Analise Laboratorial por IA</td>
+      <td class="rf-r" style="width:48%;text-align:right;vertical-align:middle;">Relatorio baseado em valores ideais.<br>Nao substitui avaliacao clinica presencial.</td>
     </tr></table>
     <button class="print-btn" onclick="window.print()">Imprimir / Salvar PDF</button>
   </div>
