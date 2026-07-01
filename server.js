@@ -248,37 +248,38 @@ function gerarHTMLIMC(peso, altura, genero, nomeP) {
   else if (imc >= 18.5) orientacao = 'Peso dentro do ideal - manter protocolos atuais';
   else                  orientacao = 'Abaixo do peso - avaliar absorcao intestinal e ingestao proteica';
 
+  const _segs = [imc < 18.5, imc >= 18.5 && imc < 25, imc >= 25 && imc < 30, imc >= 30 && imc < 35, imc >= 35];
+  const al = _segs.map(s => s ? `color:${dotc};font-weight:700;` : '');
+
   return `
     <div class="imc">
       <div class="sh">Indice de Massa Corporal</div>
-      <div class="imc-row">
-        <div class="imc-stats">
-          <div><div class="pf-label">Altura</div><div class="pf-value">${altura} cm</div></div>
-          <div><div class="pf-label">Peso</div><div class="pf-value">${peso} kg</div></div>
-          <div><div class="pf-label">IMC</div><div class="pf-value" style="color:${dotc};font-weight:700;">${imcStr} kg/m2</div></div>
-        </div>
-        <span class="badge" style="background:${bg};color:${txt};font-size:11px;padding:5px 13px;"><span class="dot" style="background:${dotc};width:7px;height:7px;"></span>${classificacao}</span>
-      </div>
-      <div class="imc-meter">
-        <div class="imc-pin" style="left:${pos}%;">
-          <div class="imc-pin-val">${imcStr}</div>
-          <div class="imc-pin-arrow"></div>
-        </div>
-        <div class="imc-track">
-          <div style="width:14%;background:#6FA8C7;"></div>
-          <div style="width:26%;background:var(--ok-dot);"></div>
-          <div style="width:20%;background:var(--l-dot);"></div>
-          <div style="width:20%;background:var(--a-dot);"></div>
-          <div style="width:20%;background:var(--c-dot);"></div>
-        </div>
-        <div class="imc-scale">
-          <div style="width:14%;">Baixo</div>
-          <div style="width:26%;">Normal</div>
-          <div style="width:20%;">Sobrepeso</div>
-          <div style="width:20%;">Obes. I</div>
-          <div style="width:20%;">Obes. II+</div>
-        </div>
-      </div>
+      <table style="width:100%;border-collapse:collapse;margin:12px 0 16px;"><tr>
+        <td style="vertical-align:middle;">
+          <table style="border-collapse:collapse;"><tr>
+            <td style="padding-right:30px;vertical-align:top;"><div class="pf-label">Altura</div><div class="pf-value">${altura} cm</div></td>
+            <td style="padding-right:30px;vertical-align:top;"><div class="pf-label">Peso</div><div class="pf-value">${peso} kg</div></td>
+            <td style="vertical-align:top;"><div class="pf-label">IMC</div><div class="pf-value" style="color:${dotc};font-weight:700;">${imcStr} kg/m2</div></td>
+          </tr></table>
+        </td>
+        <td style="text-align:right;vertical-align:middle;white-space:nowrap;">
+          <span style="display:inline-block;background:${bg};color:${txt};font-size:11px;font-weight:600;padding:5px 13px;border-radius:999px;">${classificacao}</span>
+        </td>
+      </tr></table>
+      <table style="width:100%;border-collapse:collapse;table-layout:fixed;"><tr>
+        <td style="width:14%;height:12px;background:#6FA8C7;"></td>
+        <td style="width:26%;height:12px;background:#2E8B57;"></td>
+        <td style="width:20%;height:12px;background:#C9A227;"></td>
+        <td style="width:20%;height:12px;background:#D98A2B;"></td>
+        <td style="width:20%;height:12px;background:#C0392B;"></td>
+      </tr></table>
+      <table style="width:100%;border-collapse:collapse;table-layout:fixed;margin-top:6px;"><tr>
+        <td style="width:14%;text-align:center;font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:#9AA8A4;${al[0]}">Baixo</td>
+        <td style="width:26%;text-align:center;font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:#9AA8A4;${al[1]}">Normal</td>
+        <td style="width:20%;text-align:center;font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:#9AA8A4;${al[2]}">Sobrepeso</td>
+        <td style="width:20%;text-align:center;font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:#9AA8A4;${al[3]}">Obes. I</td>
+        <td style="width:20%;text-align:center;font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:#9AA8A4;${al[4]}">Obes. II+</td>
+      </tr></table>
       <div class="imc-note"><strong>Recomendacao funcional:</strong> ${orientacao}</div>
     </div>
   `;
@@ -385,13 +386,15 @@ function buildHTML(patientName, conteudo, dateToday) {
 <body>
 <div class="page">
     <div class="rh-bar"></div>
-    <div class="rh">
-      <img src="${LOGO_B64}" style="width:190px; height:auto; mix-blend-mode:multiply;" alt="LabDoctor Logo">
-      <div class="rh-info">
-        <div class="rh-title">Relatorio de Analise Laboratorial</div>
-        <div class="rh-meta">Emitido em:: ${dateToday}</div>
-      </div>
-    </div>
+    <table style="width:100%;border-collapse:collapse;border-bottom:1px solid #E0EBE8;"><tr>
+      <td style="padding:24px 44px 20px;text-align:left;vertical-align:middle;">
+        <img src="${LOGO_B64}" style="width:190px; height:auto; mix-blend-mode:multiply;" alt="LabDoctor Logo">
+      </td>
+      <td style="padding:24px 44px 20px;text-align:right;vertical-align:middle;">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:16px;font-weight:600;color:#0E5C5C;">Relatorio de Analise Laboratorial</div>
+        <div style="font-size:10px;color:#9AA8A4;margin-top:4px;line-height:1.7;">Emitido em: ${dateToday}</div>
+      </td>
+    </tr></table>
     ${conteudo}
     <div class="rf">
       <div class="rf-l">LabDoctor - Analise Laboratorial por IA </div>
@@ -710,20 +713,20 @@ Retorne EXATAMENTE este HTML preenchido:
 <div class="ps">
   <div class="ps-name">NOME COMPLETO DO PACIENTE</div>
   <div class="ps-sub">SEXO · IDADE anos · Coleta: DATA_COLETA</div>
-  <div class="ps-fields">
-    <div><div class="pf-label">Data do Exame</div><div class="pf-value">DATA</div></div>
-    <div><div class="pf-label">Medico Solicitante</div><div class="pf-value">MEDICO OU —</div></div>
-    <div><div class="pf-label">Laboratorio</div><div class="pf-value">LAB OU —</div></div>
-    <div><div class="pf-label">N Atendimento</div><div class="pf-value">NUM OU —</div></div>
-  </div>
+  <table style="width:100%;border-collapse:collapse;margin-top:16px;table-layout:fixed;"><tr>
+    <td style="vertical-align:top;padding-right:14px;"><div class="pf-label">Data do Exame</div><div class="pf-value">DATA</div></td>
+    <td style="vertical-align:top;padding-right:14px;"><div class="pf-label">Medico Solicitante</div><div class="pf-value">MEDICO OU —</div></td>
+    <td style="vertical-align:top;padding-right:14px;"><div class="pf-label">Laboratorio</div><div class="pf-value">LAB OU —</div></td>
+    <td style="vertical-align:top;"><div class="pf-label">N Atendimento</div><div class="pf-value">NUM OU —</div></td>
+  </tr></table>
 </div>
 
-<div class="ss">
-  <div class="sb"><div class="sb-num" style="color:var(--c-dot)">N_C</div><div class="sb-label"><span class="dot" style="background:var(--c-dot)"></span>CRITICO</div></div>
-  <div class="sb"><div class="sb-num" style="color:var(--a-dot)">N_A</div><div class="sb-label"><span class="dot" style="background:var(--a-dot)"></span>ATENCAO</div></div>
-  <div class="sb"><div class="sb-num" style="color:var(--l-dot)">N_L</div><div class="sb-label"><span class="dot" style="background:var(--l-dot)"></span>LIMITROFE</div></div>
-  <div class="sb"><div class="sb-num" style="color:var(--ok-dot)">N_N</div><div class="sb-label"><span class="dot" style="background:var(--ok-dot)"></span>NORMAL</div></div>
-</div>
+<table style="width:100%;border-collapse:collapse;table-layout:fixed;border-bottom:1px solid #E0EBE8;"><tr>
+  <td style="padding:18px 14px;text-align:center;border-right:1px solid #E8F0EE;vertical-align:top;"><div class="sb-num" style="color:#C0392B">N_C</div><div class="sb-label"><span class="dot" style="background:#C0392B"></span>CRITICO</div></td>
+  <td style="padding:18px 14px;text-align:center;border-right:1px solid #E8F0EE;vertical-align:top;"><div class="sb-num" style="color:#D98A2B">N_A</div><div class="sb-label"><span class="dot" style="background:#D98A2B"></span>ATENCAO</div></td>
+  <td style="padding:18px 14px;text-align:center;border-right:1px solid #E8F0EE;vertical-align:top;"><div class="sb-num" style="color:#C9A227">N_L</div><div class="sb-label"><span class="dot" style="background:#C9A227"></span>LIMITROFE</div></td>
+  <td style="padding:18px 14px;text-align:center;vertical-align:top;"><div class="sb-num" style="color:#2E8B57">N_N</div><div class="sb-label"><span class="dot" style="background:#2E8B57"></span>NORMAL</div></td>
+</tr></table>
 
 <div class="ts">
   <div class="sh">Resultados — Classificacao por Criticidade</div>
