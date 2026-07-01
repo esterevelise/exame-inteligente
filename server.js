@@ -297,8 +297,13 @@ function buildHTML(patientName, conteudo, dateToday) {
     @page { margin: 14mm; }
     :root{--teal:#0E5C5C;--teal-2:#14746F;--teal-line:#CFE3DE;--teal-tint:#F2F8F6;--ink:#16302F;--n800:#1F2A2A;--n600:#5A6663;--n400:#9AA8A4;--n200:#E0EBE8;--n-row:#EDF3F1;--c-bg:#FBEAEA;--c-text:#9A2A2A;--c-dot:#C0392B;--a-bg:#FBF1E0;--a-text:#8A5A12;--a-dot:#D98A2B;--l-bg:#FAF6E3;--l-text:#7A6A1E;--l-dot:#C9A227;--ok-bg:#E8F3EC;--ok-text:#1E6B43;--ok-dot:#2E8B57;--fd:'Source Serif 4',Georgia,serif;--fb:'IBM Plex Sans',system-ui,sans-serif;}
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:#E6EEEC;color:#1F2A2A;font-size:12px;line-height:1.5;-webkit-font-smoothing:antialiased;}
-    .page{width:100%;max-width:100%;margin:0;background:#fff;}
+    body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:#fff;color:#1F2A2A;font-size:12px;line-height:1.5;-webkit-font-smoothing:antialiased;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .page{width:794px;max-width:100%;margin:0 auto;background:#fff;}
+    /* Aparencia de folha SOMENTE na tela real (viewport largo). O wkhtmltopdf renderiza em ~680-794px e nao dispara esta regra, ficando limpo no PDF. */
+    @media screen and (min-width:900px){
+      body{background:#EAF1EF;padding:28px 0;}
+      .page{box-shadow:0 8px 34px rgba(14,60,60,0.14);border-radius:6px;overflow:hidden;}
+    }
 
     /* Responsive */
     @media (max-width: 1024px) { .page { max-width: 100%; margin: 8px; box-shadow: 0 2px 10px rgba(14,60,60,0.10); } }
@@ -382,7 +387,7 @@ function buildHTML(patientName, conteudo, dateToday) {
     .rf-r{font-size:9px;color:#9AA8A4;text-align:right;line-height:1.6;}
     .print-btn{width:100%;padding:14px 20px;background:#0E5C5C;color:#fff;border:none;cursor:pointer;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:14px;font-weight:600;letter-spacing:0.02em;margin-top:10px;transition:background 0.3s;}
     .print-btn:hover{background:#14746F;}
-    @media print{body{background:#fff;}.page{margin:0;box-shadow:none;border-radius:0;max-width:none;width:100%;}.print-btn{display:none;}}
+    @media print{body{background:#fff;padding:0;}.page{margin:0;box-shadow:none;border-radius:0;max-width:100%;width:100%;}.print-btn{display:none;}}
   </style>
 </head>
 <body>
