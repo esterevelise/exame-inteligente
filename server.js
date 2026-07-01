@@ -789,33 +789,36 @@ REGRAS ABSOLUTAS:
 
       .replace(/^```html\n?/, '').replace(/\n?```$/, '').trim();
 
-    // Contar exames pelo tbody da tabela - metodo mais confiavel
+    // Contar exames pelos selos (badges) presentes no HTML - metodo mais confiavel.
+    // Cada linha de resultado tem exatamente um selo; os agrupadores nao contem "class=badge".
     let nC = 0, nA = 0, nL = 0, nN = 0;
-
-    // Extrair tbody da tabela principal de exames
-    const tbodyMatch = inner.match(/<tbody>([\s\S]*?)<\/tbody>/);
-    if (tbodyMatch) {
-      const tbody = tbodyMatch[1];
-      // Contar cada linha <tr> e verificar qual badge tem
-      const rows = tbody.match(/<tr[\s\S]*?<\/tr>/g) || [];
-      rows.forEach(row => {
-        if (row.includes('badge bc')) nC++;
-        else if (row.includes('badge ba')) nA++;
-        else if (row.includes('badge bl')) nL++;
-        else if (row.includes('badge bn')) nN++;
-      });
-    }
+    const contarSelo = (cls) => (inner.match(new RegExp('class="badge ' + cls + '"', 'g')) || []).length;
+    nC = contarSelo('bc'); // Critico
+    nA = contarSelo('ba'); // Atencao
+    nL = contarSelo('bl'); // Limitrofe
+    nN = contarSelo('bn'); // Normal
 
     // Remover comentario de contagem se existir
     inner = inner.replace(/<!--COUNTS:[^>]+-->\s*/, '');
     console.log('Contagem por tbody - C:', nC, 'A:', nA, 'L:', nL, 'N:', nN, 'Total:', nC+nA+nL+nN);
 
-    // Substituir placeholders pelos valores reais
+    // Substituir placeholders pelos valores reais (caso a IA os tenha mantido)
     inner = inner
       .replace(/\bN_C\b/g, String(nC))
       .replace(/\bN_A\b/g, String(nA))
       .replace(/\bN_L\b/g, String(nL))
       .replace(/\bN_N\b/g, String(nN));
+
+    // FORCAR os numeros dos agrupadores com a contagem real do servidor,
+    // mesmo que a IA tenha escrito valores proprios (identifica a caixa pela cor).
+    const forcarAgrupador = (hex, valor) => {
+      const re = new RegExp('(<div class="sb-num"[^>]*' + hex + '[^>]*>)[^<]*(</div>)', 'i');
+      inner = inner.replace(re, '$1' + valor + '$2');
+    };
+    forcarAgrupador('#C0392B', nC); // Critico
+    forcarAgrupador('#D98A2B', nA); // Atencao
+    forcarAgrupador('#C9A227', nL); // Limitrofe
+    forcarAgrupador('#2E8B57', nN); // Normal
 
     // Corrigir caracteres corrompidos (UTF-8 mal interpretado como latin-1)
     const cleanEncoding = (str) => str
