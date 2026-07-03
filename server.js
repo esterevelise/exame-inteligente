@@ -476,7 +476,7 @@ app.get('/', (req, res) => {
 
         <div class="content">
           <div class="info-box">
-            ℹ️ <strong>Instruções:</strong> Carregue o PDF do exame, preencha os dados do paciente (peso, altura, gênero) e clique em "Analisar". O resultado será exibido abaixo.
+            ℹ️ <strong>Instruções:</strong> Carregue o PDF do exame, preencha o nome do paciente e, se desejar, os dados biométricos (peso, altura, gênero) e clique em "Analisar". O resultado será exibido abaixo.
           </div>
 
           <form id="analyzeForm">
@@ -489,16 +489,16 @@ app.get('/', (req, res) => {
             <!-- Dados Biométricos -->
             <div class="form-row">
               <div class="form-group">
-                <label for="peso">Peso (kg) *</label>
-                <input type="number" id="peso" name="peso" placeholder="Ex: 70" step="0.1" min="20" max="300" required>
+                <label for="peso">Peso (kg)</label>
+                <input type="number" id="peso" name="peso" placeholder="Ex: 70" step="0.1" min="20" max="300">
               </div>
               <div class="form-group">
-                <label for="altura">Altura (cm) *</label>
-                <input type="number" id="altura" name="altura" placeholder="Ex: 170" step="0.1" min="100" max="250" required>
+                <label for="altura">Altura (cm)</label>
+                <input type="number" id="altura" name="altura" placeholder="Ex: 170" step="0.1" min="100" max="250">
               </div>
               <div class="form-group">
-                <label for="genero">Gênero *</label>
-                <select id="genero" name="genero" required>
+                <label for="genero">Gênero</label>
+                <select id="genero" name="genero">
                   <option value="">Selecione...</option>
                   <option value="F">Feminino</option>
                   <option value="M">Masculino</option>
@@ -549,9 +549,11 @@ app.get('/', (req, res) => {
           e.preventDefault();
           
           const patientName = document.getElementById('patientName').value;
-          const peso = parseFloat(document.getElementById('peso').value);
-          const altura = parseFloat(document.getElementById('altura').value);
-          const genero = document.getElementById('genero').value;
+          const pesoRaw = document.getElementById('peso').value;
+          const alturaRaw = document.getElementById('altura').value;
+          const peso = pesoRaw ? parseFloat(pesoRaw) : null;
+          const altura = alturaRaw ? parseFloat(alturaRaw) : null;
+          const genero = document.getElementById('genero').value || null;
           const pdfFile = document.getElementById('pdfFile').files[0];
 
           if (!pdfFile) {
