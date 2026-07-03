@@ -451,10 +451,10 @@ app.get('/', (req, res) => {
 
         .resultado {
           margin-top: 30px; padding: 20px; background: #EAF7F9; border-radius: 8px;
-          display: none; max-height: 600px; overflow-y: auto; border: 1px solid #e0e0e0;
+          display: none; border: 1px solid #e0e0e0;
         }
         .resultado.show { display: block; }
-        .resultado iframe { width: 100%; height: 800px; border: none; border-radius: 8px; }
+        .resultado iframe { width: 100%; height: 900px; border: none; border-radius: 8px; display: block; }
 
         .loading { display: none; text-align: center; padding: 20px; }
         .loading.show { display: block; }
@@ -470,7 +470,9 @@ app.get('/', (req, res) => {
     <body>
       <div class="container">
         <div class="header">
-          <h1> LabDoctor</h1>
+          <div style="display:flex;align-items:center;justify-content:center;margin-bottom:4px;">
+            <img src="/assets/logo.jpeg" alt="LabDoctor" style="height:72px;width:auto;border-radius:12px;background:#fff;padding:6px 14px;object-fit:contain;">
+          </div>
           <p>Análise Inteligente de Exames Laboratoriais</p>
         </div>
 
