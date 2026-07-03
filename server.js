@@ -418,53 +418,53 @@ app.get('/', (req, res) => {
       <title>LabDoctor — Análise de Exames</title>
       <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'DM Sans', system-ui, sans-serif; background: #F5F1E8; min-height: 100vh; padding: 20px; }
+        body { font-family: 'DM Sans', system-ui, sans-serif; background: #EAF7F9; min-height: 100vh; padding: 20px; }
         .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); overflow: hidden; }
-        
-        .header { background: #EAE4D9; color: #333; padding: 40px 20px; text-align: center; }
+
+        .header { background: #0FB5C4; color: #fff; padding: 40px 20px; text-align: center; }
         .header h1 { font-size: 32px; margin-bottom: 8px; }
         .header p { font-size: 16px; opacity: 0.9; }
-        
+
         .content { padding: 40px 30px; }
-        
+
         .form-group { margin-bottom: 20px; }
         label { display: block; font-weight: 600; color: #333; margin-bottom: 8px; font-size: 14px; }
-        input[type="text"], input[type="number"], input[type="file"], select { 
-          width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; 
+        input[type="text"], input[type="number"], input[type="file"], select {
+          width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;
           font-size: 14px; font-family: inherit; transition: border-color 0.3s;
         }
-        input[type="text"]:focus, input[type="number"]:focus, input[type="file"]:focus, select:focus { 
-          outline: none; border-color: #117878; 
+        input[type="text"]:focus, input[type="number"]:focus, input[type="file"]:focus, select:focus {
+          outline: none; border-color: #0FB5C4;
         }
-        
+
         .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
         @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
-        
-        .info-box { background: #f0f8f8; padding: 15px; border-radius: 8px; border-left: 4px solid #117878; margin-bottom: 20px; font-size: 13px; color: #555; }
-        
-        button { 
-          width: 100%; padding: 14px; background: #D4A574; 
-          color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; 
+
+        .info-box { background: #EAF7F9; padding: 15px; border-radius: 8px; border-left: 4px solid #0FB5C4; margin-bottom: 20px; font-size: 13px; color: #555; }
+
+        button {
+          width: 100%; padding: 14px; background: #0FB5C4;
+          color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600;
           cursor: pointer; transition: transform 0.2s; margin-top: 10px;
         }
         button:hover { transform: translateY(-2px); }
-        
-        .resultado { 
-          margin-top: 30px; padding: 20px; background: #f5f5f5; border-radius: 8px; 
+
+        .resultado {
+          margin-top: 30px; padding: 20px; background: #EAF7F9; border-radius: 8px;
           display: none; max-height: 600px; overflow-y: auto; border: 1px solid #e0e0e0;
         }
         .resultado.show { display: block; }
         .resultado iframe { width: 100%; height: 800px; border: none; border-radius: 8px; }
-        
+
         .loading { display: none; text-align: center; padding: 20px; }
         .loading.show { display: block; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #D4A574; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #0FB5C4; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
+
         .erro { display: none; background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; margin-top: 15px; }
         .erro.show { display: block; }
-        
-        .footer { background: #f5f5f5; padding: 20px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #e0e0e0; }
+
+        .footer { background: #EAF7F9; padding: 20px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #e0e0e0; }
       </style>
     </head>
     <body>
@@ -517,13 +517,13 @@ app.get('/', (req, res) => {
 
           <div id="loading" class="loading">
             <div class="spinner"></div>
-            <p style="margin-top: 15px; color: #117878;">Analisando exame... Por favor aguarde.</p>
+            <p style="margin-top: 15px; color: #0FB5C4;">Analisando exame... Por favor aguarde.</p>
           </div>
 
           <div id="erro" class="erro"></div>
 
           <div id="resultado" class="resultado">
-            <h3 style="margin-bottom: 15px; color: #117878;">📋 Relatório Gerado</h3>
+            <h3 style="margin-bottom: 15px; color: #0FB5C4;">📋 Relatório Gerado</h3>
             <iframe 
             id="reportFrame"
             style="
