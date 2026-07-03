@@ -419,7 +419,7 @@ app.get('/', (req, res) => {
       <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'DM Sans', system-ui, sans-serif; background: #EAF7F9; min-height: 100vh; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); overflow: hidden; }
+        .container { max-width: 1240px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); overflow: hidden; }
 
         .header { background: #0FB5C4; color: #fff; padding: 40px 20px; text-align: center; }
         .header h1 { font-size: 32px; margin-bottom: 8px; }
