@@ -21,11 +21,11 @@ CT = Colesterol Total: 0 a 240 mg/dL
 TG = Triglicerides: 0 a 100 mg/dL
 PCR = Proteina C Reativa: 0 a 1 mg/L
 TSH = Hormonio Tireoestimulante: 1 a 2.5 mUI/L
-25-OH Vitamina D = Vitamina D = 25OHD: 50 a 150 ng/mL
+25-OH Vitamina D = Vitamina D = 25OHD: 800 a 150 ng/mL
 PTHi = PTH = Paratormonio: 25 a 40 pg/mL
 DHEA-S = DHEAS = DHEA Sulfato = DHEA: 200 a 300 ug/dL
 Segmentados = Neutrofilos Segmentados = Neutrofilos: 4000 a 6500 /mm3
-Cobalamina = B12 = Vitamina B12: 500 a 1200 pg/mL
+Cobalamina = B12 = Vitamina B12: 800 a 1200 pg/mL
 Ac. Folico = Folato = B9: 12 a 17 ng/mL
 `;
 
@@ -126,11 +126,11 @@ Vitamina A (Retinol Serico): Min 0 / Max 0.5 mg/L
 Vitamina B1 (Tiamina): Min 120 / Max 150 nmol/L
 Vitamina B6: Min 0 / Max 20 ug/L
 B9 (Acido Folico): Min 12 / Max 17 ng/mL
-Vitamina B12: Min 500 / Max 1200 pg/mL
+Vitamina B12: Min 800 / Max 1200 pg/mL
 Vitamina C: Min 1.4 / Max 1.9 mg/dL
 Calcio Ionico: Min 4.6 / Max 5.1 mg/dL
 Calcio Serico: Min 9.3 / Max 10.2 mg/dL
-Vitamina D (25OHd3): Min 50 / Max 150 ng/mL
+Vitamina D (25OHd3): Min 80 / Max 150 ng/mL
 PTH: Min 25 / Max 40 pg/mL
 Magnesio: Min 2 / Max 2.2 mg/dL
 Selenio: Min 120 / Max 180 ug/L
