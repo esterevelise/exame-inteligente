@@ -596,32 +596,54 @@ function classificarValor(valor, min, max) {
   return 'bn';
 }
 
-const ROTULO_STATUS = { bh: 'Acima do Ideal', bb: 'Abaixo do Ideal', bn: 'Normal' };
+const ROTULO_STATUS = { bh: 'Acima do Ideal', bb: 'Abaixo do Ideal', bn: 'Normal', bs: 'Sem referencia' };
+const PESO_STATUS = { bh: 0, bb: 1, bn: 2, bs: 3 };
 
+// Corrige o selo de cada exame (com base em Valor x Min/Max) e reordena as
+// linhas: Acima do Ideal, depois Abaixo do Ideal, depois Normal (Sem
+// referencia sempre por ultimo); dentro de cada grupo, ordem alfabetica.
 function corrigirClassificacoes(html) {
   // [^<]* (em vez de [\s\S]*?) impede que o backtracking "vaze" por cima da
   // fronteira de uma linha (ex.: uma linha "Sem referencia" logo antes) e
   // engula a linha seguinte inteira, fazendo-a ser pulada silenciosamente.
-  const rowRe = /<tr>\s*<td class="tm">([^<]*)<\/td>\s*<td class="tv">([^<]*)<\/td>\s*<td class="tref">([^<]*)<\/td>\s*<td class="tref">([^<]*)<\/td>\s*<td>\s*<span class="badge (bh|bb|bn)">(?:<span class="dot"><\/span>)?[^<]*<\/span>\s*<\/td>\s*<td class="tobs">([^<]*)<\/td>\s*<\/tr>/g;
+  const rowRe = /<tr>\s*<td class="tm">([^<]*)<\/td>\s*<td class="tv">([^<]*)<\/td>\s*<td class="tref">([^<]*)<\/td>\s*<td class="tref">([^<]*)<\/td>\s*<td>\s*<span class="badge (bh|bb|bn|bs)">(?:<span class="dot"><\/span>)?[^<]*<\/span>\s*<\/td>\s*<td class="tobs">([^<]*)<\/td>\s*<\/tr>/g;
+
+  const matches = [...html.matchAll(rowRe)];
+  if (matches.length === 0) return html;
 
   let corrigidos = 0;
-  const novoHtml = html.replace(rowRe, (full, nome, valorCell, minCell, maxCell, badgeAtual, obs) => {
-    const min = parseNumeroExame(minCell);
-    const max = parseNumeroExame(maxCell);
-    const valor = parseNumeroExame(valorCell);
-    if (Number.isNaN(min) || Number.isNaN(max) || Number.isNaN(valor)) return full; // linhas "Sem referencia" (min/max = "-")
+  const linhas = matches.map(([full, nome, valorCell, minCell, maxCell, badgeAtual, obs]) => {
+    let status = badgeAtual;
 
-    const statusCorreto = classificarValor(valor, min, max);
-    if (statusCorreto === badgeAtual) return full;
+    if (status !== 'bs') {
+      const min = parseNumeroExame(minCell);
+      const max = parseNumeroExame(maxCell);
+      const valor = parseNumeroExame(valorCell);
+      if (!Number.isNaN(min) && !Number.isNaN(max) && !Number.isNaN(valor)) {
+        const statusCorreto = classificarValor(valor, min, max);
+        if (statusCorreto !== status) {
+          corrigidos++;
+          console.log(`Correcao de classificacao: "${nome.trim()}" valor=${valor} min=${min} max=${max} -> era ${ROTULO_STATUS[status]}, correto e ${ROTULO_STATUS[statusCorreto]}`);
+          status = statusCorreto;
+        }
+      }
+    }
 
-    corrigidos++;
-    console.log(`Correcao de classificacao: "${nome.trim()}" valor=${valor} min=${min} max=${max} -> era ${ROTULO_STATUS[badgeAtual]}, correto e ${ROTULO_STATUS[statusCorreto]}`);
+    const linhaHtml = `<tr><td class="tm">${nome}</td><td class="tv">${valorCell}</td><td class="tref">${minCell}</td><td class="tref">${maxCell}</td><td><span class="badge ${status}"><span class="dot"></span>${ROTULO_STATUS[status]}</span></td><td class="tobs">${obs}</td></tr>`;
+    return { html: linhaHtml, status, nome: nome.trim() };
+  });
 
-    return `<tr><td class="tm">${nome}</td><td class="tv">${valorCell}</td><td class="tref">${minCell}</td><td class="tref">${maxCell}</td><td><span class="badge ${statusCorreto}"><span class="dot"></span>${ROTULO_STATUS[statusCorreto]}</span></td><td class="tobs">${obs}</td></tr>`;
+  linhas.sort((a, b) => {
+    if (PESO_STATUS[a.status] !== PESO_STATUS[b.status]) return PESO_STATUS[a.status] - PESO_STATUS[b.status];
+    return a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' });
   });
 
   if (corrigidos > 0) console.log(`Total de classificacoes corrigidas: ${corrigidos}`);
-  return novoHtml;
+
+  const inicio = matches[0].index;
+  const ultimoMatch = matches[matches.length - 1];
+  const fim = ultimoMatch.index + ultimoMatch[0].length;
+  return html.slice(0, inicio) + linhas.map(l => l.html).join('\n    ') + html.slice(fim);
 }
 
 // Rota inicial
@@ -921,7 +943,7 @@ INSTRUCOES OBRIGATORIAS:
 1. Determine a coluna de referencia: se dados.idade < 18, use a coluna I (Infantil); caso contrario use a coluna M se dados.sexo = Masculino, ou a coluna F se dados.sexo = Feminino. Se dados.sexo vier vazio/ambiguo, use a coluna F por padrao e informe essa suposicao na observacao do primeiro exame afetado.
 2. Compare CADA exame com a tabela EloSaude (usando SINONIMOS para identificar o marcador) exclusivamente na coluna de referencia determinada no passo 1 — nunca misture colunas M/F/I
 3. Classifique cada exame em exatamente 3 estados, com precisao matematica: ACIMA DO IDEAL (valor > Max), ABAIXO DO IDEAL (valor < Min), ou NORMAL (Min <= valor <= Max). Aplique as REGRAS ESPECIAIS DE LEITURA DA TABELA descritas acima (0-0, Max=0, marcador ausente da tabela)
-4. Ordene: ACIMA DO IDEAL e ABAIXO DO IDEAL primeiro (nesta ordem), depois NORMAL
+4. Ordene: ACIMA DO IDEAL primeiro, depois ABAIXO DO IDEAL, depois NORMAL; dentro de cada grupo, ordem alfabetica pelo nome do marcador (o servidor reordena e corrige isso automaticamente, mas gere ja nesta ordem)
 5. Gere ALERTAS CLINICOS AUTOMATICOS quando encontrar estas combinacoes:
    - Vitamina D Abaixo do Ideal + PTH Acima do Ideal = Hiperparatireoidismo Secundario — suplementacao D3 IV prioritaria
    - Ferritina Acima do Ideal + PCR Acima do Ideal = Ferritina pode estar inflacionada por inflamacao — ferro real pode estar baixo
