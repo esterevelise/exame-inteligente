@@ -555,6 +555,75 @@ function buildHTML(patientName, conteudo, dateToday) {
 </html>`;
 }
 
+// ============ VALIDACAO DETERMINISTICA DE CLASSIFICACAO ============
+// A IA às vezes erra a comparacao numerica (ex: valor 142.7 com faixa 100-130
+// classificado como "Normal" quando deveria ser "Acima do Ideal"). Como o
+// proprio HTML gerado ja traz Valor/Min/Max de cada exame, aqui recalculamos
+// a classificacao real em JS (100% deterministico, sem chance de erro de
+// arredondamento/interpretacao) e forcamos o selo correto quando a IA errar.
+
+function parseNumeroExame(str) {
+  if (str == null) return NaN;
+  const m = String(str).trim().match(/-?\d{1,3}(?:[.,]\d{3})+(?:[.,]\d+)?|-?\d+(?:[.,]\d+)?/);
+  if (!m) return NaN;
+  let tok = m[0];
+  const lastComma = tok.lastIndexOf(',');
+  const lastDot = tok.lastIndexOf('.');
+  if (lastComma !== -1 && lastDot !== -1) {
+    // Tem os dois separadores: o que aparece por ultimo e o decimal.
+    tok = lastComma > lastDot
+      ? tok.replace(/\./g, '').replace(',', '.')
+      : tok.replace(/,/g, '');
+  } else if (lastComma !== -1) {
+    // Só virgula: decimal (pt-BR) se sobrarem 1-2 digitos, senao milhar.
+    const decimais = tok.length - lastComma - 1;
+    tok = decimais <= 2 ? tok.replace(',', '.') : tok.replace(/,/g, '');
+  } else if (lastDot !== -1) {
+    // Só ponto: se sobrarem exatamente 3 digitos (ex: "6.500" leucocitos),
+    // e separador de milhar, nao decimal — exames nao usam 3 casas decimais.
+    const casas = tok.length - lastDot - 1;
+    if (casas === 3) tok = tok.replace(/\./g, '');
+  }
+  return parseFloat(tok);
+}
+
+// Aplica as mesmas REGRAS ESPECIAIS DE LEITURA DA TABELA do prompt.
+function classificarValor(valor, min, max) {
+  if (min === 0 && max === 0) return valor > 0 ? 'bh' : 'bn';
+  if (max === 0 && min > 0) return valor < min ? 'bb' : 'bn';
+  if (valor > max) return 'bh';
+  if (valor < min) return 'bb';
+  return 'bn';
+}
+
+const ROTULO_STATUS = { bh: 'Acima do Ideal', bb: 'Abaixo do Ideal', bn: 'Normal' };
+
+function corrigirClassificacoes(html) {
+  // [^<]* (em vez de [\s\S]*?) impede que o backtracking "vaze" por cima da
+  // fronteira de uma linha (ex.: uma linha "Sem referencia" logo antes) e
+  // engula a linha seguinte inteira, fazendo-a ser pulada silenciosamente.
+  const rowRe = /<tr>\s*<td class="tm">([^<]*)<\/td>\s*<td class="tv">([^<]*)<\/td>\s*<td class="tref">([^<]*)<\/td>\s*<td class="tref">([^<]*)<\/td>\s*<td>\s*<span class="badge (bh|bb|bn)">(?:<span class="dot"><\/span>)?[^<]*<\/span>\s*<\/td>\s*<td class="tobs">([^<]*)<\/td>\s*<\/tr>/g;
+
+  let corrigidos = 0;
+  const novoHtml = html.replace(rowRe, (full, nome, valorCell, minCell, maxCell, badgeAtual, obs) => {
+    const min = parseNumeroExame(minCell);
+    const max = parseNumeroExame(maxCell);
+    const valor = parseNumeroExame(valorCell);
+    if (Number.isNaN(min) || Number.isNaN(max) || Number.isNaN(valor)) return full; // linhas "Sem referencia" (min/max = "-")
+
+    const statusCorreto = classificarValor(valor, min, max);
+    if (statusCorreto === badgeAtual) return full;
+
+    corrigidos++;
+    console.log(`Correcao de classificacao: "${nome.trim()}" valor=${valor} min=${min} max=${max} -> era ${ROTULO_STATUS[badgeAtual]}, correto e ${ROTULO_STATUS[statusCorreto]}`);
+
+    return `<tr><td class="tm">${nome}</td><td class="tv">${valorCell}</td><td class="tref">${minCell}</td><td class="tref">${maxCell}</td><td><span class="badge ${statusCorreto}"><span class="dot"></span>${ROTULO_STATUS[statusCorreto]}</span></td><td class="tobs">${obs}</td></tr>`;
+  });
+
+  if (corrigidos > 0) console.log(`Total de classificacoes corrigidas: ${corrigidos}`);
+  return novoHtml;
+}
+
 // Rota inicial
 app.get('/', (req, res) => {
   res.header('Content-Type', 'text/html; charset=utf-8'); res.send(`
@@ -936,6 +1005,10 @@ REGRAS ABSOLUTAS:
     //let rawInner =analyzeMsg.content[0].text
 
       .replace(/^```html\n?/, '').replace(/\n?```$/, '').trim();
+
+    // Recalcula deterministicamente a classificacao de cada exame (valor x min/max)
+    // e corrige o selo caso a IA tenha classificado errado.
+    inner = corrigirClassificacoes(inner);
 
     // Contar exames pelos selos (badges) presentes no HTML - metodo mais confiavel.
     // Cada linha de resultado tem exatamente um selo; os agrupadores nao contem "class=badge".
